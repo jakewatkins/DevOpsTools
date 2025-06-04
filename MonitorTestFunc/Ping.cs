@@ -4,34 +4,32 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Cosmos.Table;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace GuerillaProgrammer;
 
 public class Ping
 {
     private readonly ILogger<Ping> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly ConfigurationAgent _configurationAgent;
 
-    public Ping(ILogger<Ping> logger)
+    public Ping(ILogger<Ping> logger, IConfiguration configuration, ConfigurationAgent configurationAgent)
     {
         _logger = logger;
+        _configuration = configuration;
+        _configurationAgent = configurationAgent;
     }
 
     [Function("Ping")]
     public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequest req)
     {
-        var storageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("TestConfiguration"));
-        var tableClient = storageAccount.CreateCloudTableClient();
-        var table = tableClient.GetTableReference("TestConfig");
-        await table.CreateIfNotExistsAsync();
-        var retrieveOperation = TableOperation.Retrieve<DynamicTableEntity>("TEST", "PING");
-        var result = await table.ExecuteAsync(retrieveOperation);
-        var entity = result.Result as DynamicTableEntity;
-        if (entity != null && entity.Properties.ContainsKey("Enabled") && entity.Properties["Enabled"].BooleanValue == true && entity.Properties.ContainsKey("Count") && entity.Properties["Count"].Int32Value > 0)
+        var isEnabled = _configurationAgent.IsEnabled("PING");
+        var count = _configurationAgent.GetCount("PING");
+        if (isEnabled == true && count > 0)
         {
             _logger.LogError("Ping - AN ERROR HAS OCCURRED");
-            entity.Properties["Count"].Int32Value--;
-            var updateOperation = TableOperation.Replace(entity);
-            await table.ExecuteAsync(updateOperation);
+            _configurationAgent.UpdateCount("PING", count - 1);
         }
         else
         {
