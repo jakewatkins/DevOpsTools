@@ -3,38 +3,37 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos.Table;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace GuerillaProgrammer;
 
 public class TickTok
 {
     private readonly ILogger<TickTok> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly ConfigurationAgent _configurationAgent;
 
-    public TickTok(ILogger<TickTok> logger)
+    public TickTok(ILogger<TickTok> logger, IConfiguration configuration, ConfigurationAgent configurationAgent)
     {
         _logger = logger;
+        _configuration = configuration;
+        _configurationAgent = configurationAgent;
     }
 
     [Function("TickTok")]
-    public async Task Run([TimerTrigger("0 */1 * * * *")] TimerInfo myTimer)
+    public async Task Run([TimerTrigger("0 */1 * * * *", RunOnStartup = true)] TimerInfo myTimer)
     {
-        var storageAccount = CloudStorageAccount.Parse(Environment.GetEnvironmentVariable("TestConfiguration"));
-        var tableClient = storageAccount.CreateCloudTableClient();
-        var table = tableClient.GetTableReference("TestConfig");
-        await table.CreateIfNotExistsAsync();
-        var retrieveOperation = TableOperation.Retrieve<DynamicTableEntity>("TEST", "TICKTOK");
-        var result = await table.ExecuteAsync(retrieveOperation);
-        var entity = result.Result as DynamicTableEntity;
-        if (entity != null && entity.Properties.ContainsKey("Enabled") && entity.Properties["Enabled"].BooleanValue == true && entity.Properties.ContainsKey("Count") && entity.Properties["Count"].Int32Value > 0)
+        var isEnabled = _configurationAgent.IsEnabled("TICKTOK");
+        var count = _configurationAgent.GetCount("TICKTOK");
+        if (isEnabled == true && count > 0)
         {
             _logger.LogError("TickTok - AN ERROR HAS OCCURRED");
-            entity.Properties["Count"].Int32Value--;
-            var updateOperation = TableOperation.Replace(entity);
-            await table.ExecuteAsync(updateOperation);
+            _configurationAgent.UpdateCount("TICKTOK", count - 1);
         }
         else
         {
             _logger.LogInformation("TickTok is working");
         }
+        //return new OkObjectResult("TickTok function executed");
     }
 }
