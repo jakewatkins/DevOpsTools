@@ -5,7 +5,17 @@
             "name": "Attach to .NET Functions",
             "type": "coreclr",
             "request": "attach",
-            "processId": "${command:azureFunctions.pickProcess}"
+            "processId": "${command:azureFunctions.pickProcess}",
+            "env" : {
+              "NEW_RELIC_LICENSE_KEY" : "4ea9644577a24983c4bdf4844c867556FFFFNRAL",
+              "NEW_RELIC_APP_NAME" : "sre-test-local",
+              "NEW_RELIC_DISTRIBUTED_TRACING_ENABLED" : "true",
+              "CORECLR_ENABLE_PROFILING" : "1",
+              "CORECLR_NEWRELIC_HOME" : "C:/Users/jakewatkins/source/gp/DevOpsTools/MonitorTestFunc/bin/Debug/net8.0/newrelic",
+              "CORECLR_PROFILER" : "{B0A3D1C2-4E6B-4F8A-9B5C-7D3F8E1A2B3C}",
+              "CORECLR_PROFILER_PATH" : "C:/Users/jakewatkins/source/gp/DevOpsTools/MonitorTestFunc/bin/Debug/net8.0/newrelic/NewRelic.Profiler.dll",
+              "NEW_RELIC_LOG" : "C:/Users/jakewatkins/source/gp/DevOpsTools/MonitorTestFunc/bin/Debug/net8.0/newrelic/logs/newrelic_agent.log",
+            },
         }
     ]
 }

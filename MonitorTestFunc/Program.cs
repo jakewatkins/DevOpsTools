@@ -27,16 +27,17 @@ var  configuration = new ConfigurationBuilder()
 builder.Configuration.AddConfiguration(configuration);
 
     
-var options = new ConfigurationReaderOptions { SectionName = "Serilog" };
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration, options)
-    .MinimumLevel.Debug()
-    .Enrich.FromLogContext()
-    .WriteTo.Console()
-    .CreateLogger();
+
 
 builder.Services.AddLogging(loggingBuilder =>
 {
+    var options = new ConfigurationReaderOptions { SectionName = "Serilog" };
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(configuration, options)
+        .MinimumLevel.Debug()
+        .Enrich.FromLogContext()
+        .WriteTo.Console()
+        .CreateLogger();
     loggingBuilder.AddSerilog(Log.Logger, dispose: true);
 });
 

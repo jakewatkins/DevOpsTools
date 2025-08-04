@@ -30,6 +30,7 @@ public class Ping
         {
             _logger.LogError("Ping - AN ERROR HAS OCCURRED");
             _configurationAgent.UpdateCount("PING", count - 1);
+            return new BadRequestObjectResult("Ping function threw an error!");
         }
         else
         {
