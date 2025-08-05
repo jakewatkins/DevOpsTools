@@ -2,10 +2,9 @@
 
 
 using System.Data;
-using Microsoft.WindowsAzure.Storage.Table;
+using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
 
 namespace GuerillaProgrammer;
 
@@ -26,11 +25,11 @@ public class ConfigurationAgent
         var storageAccount = CloudStorageAccount.Parse(storageAccountConnectionString);
         var tableClient = storageAccount.CreateCloudTableClient();
         var table = tableClient.GetTableReference("TestConfig");
-        table.CreateIfNotExistsAsync();
+        table.CreateIfNotExists();
 
         var retrieveOperation = TableOperation.Retrieve<DynamicTableEntity>("TEST", functionName);
-        var result = table.ExecuteAsync(retrieveOperation);
-        return result.Result.Result as DynamicTableEntity;
+        var result = table.Execute(retrieveOperation);
+        return result.Result as DynamicTableEntity;
     }
 
 
@@ -78,7 +77,7 @@ public class ConfigurationAgent
             var storageAccount = CloudStorageAccount.Parse(storageAccountConnectionString);
             var tableClient = storageAccount.CreateCloudTableClient();
             var table = tableClient.GetTableReference("TestConfig");
-            table.ExecuteAsync(updateOperation);
+            table.Execute(updateOperation);
             _logger.LogInformation($"{functionName} count updated to {count}");
         }
         else

@@ -15,9 +15,9 @@ var builder = FunctionsApplication.CreateBuilder(args);
 builder.ConfigureFunctionsWebApplication();
 
 var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "dev";
-var workingDirectory = Environment.CurrentDirectory; 
+var workingDirectory = Environment.CurrentDirectory;
 
-var  configuration = new ConfigurationBuilder()
+var configuration = new ConfigurationBuilder()
                 .AddJsonFile(Path.Combine(workingDirectory, "settings.json"), false, true)
                 .AddJsonFile(Path.Combine(workingDirectory, $"{environment}.settings.json"), true, true)
                 .AddJsonFile(Path.Combine(workingDirectory, "local.settings.json"), true, true)
@@ -26,7 +26,7 @@ var  configuration = new ConfigurationBuilder()
 
 builder.Configuration.AddConfiguration(configuration);
 
-    
+
 
 
 builder.Services.AddLogging(loggingBuilder =>

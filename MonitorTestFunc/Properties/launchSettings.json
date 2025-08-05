@@ -1,8 +1,8 @@
 {
   "profiles": {
-    "DevOpsTools": {
+    "TestFunc": {
       "commandName": "Project",
-      "commandLineArgs": "--port 7185",
+      "commandLineArgs": "--port 7213",
       "launchBrowser": false
     }
   }

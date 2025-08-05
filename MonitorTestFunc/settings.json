@@ -1,0 +1,50 @@
+{
+    "AppName": "SRE Test Function",
+    "AZURE_FUNCTIONS_ENVIRONMENT": "dev",
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+    },
+    "Grpc": {
+        "ChannelUri": "http://localhost:7200"
+    },
+    "ConnectionStrings": {
+        "TestConfiguration" : "DefaultEndpointsProtocol=https;AccountName=jkwfiles;AccountKey=/l35gl7COW6HBMZE4US5Uxj5iDCM+fn876KiUaUMt9svJO+5Kw6GigKTjtqtTeblkAKPrQVXlXvO0KXPzA1LbA==;EndpointSuffix=core.windows.net"
+    },
+    "Logging": {
+        "LogLevel": {
+            "Default": "Information",
+            "Microsoft.AspNetCore": "Warning"
+        }
+    },
+    "AllowedHosts": "*",
+    "Serilog": {
+        "Using": [ "Serilog.Sinks.NewRelic.Logs", "NewRelic.LogEnrichers.Serilog" ],
+        "MinimumLevel": {
+            "Default": "Information",
+            "Override": {
+                "Microsoft": "Information",
+                "System": "Information",
+                "Microsoft.AspNetCore": "Information"
+            }
+        },
+        "WriteTo": [
+            {
+                "Name": "NewRelicLogs",
+                "Args": {
+                    "Application": "sre-monitor-test-funv-dev",
+                    "applicationName": "sre-monitor-test-funv-dev",
+                    "insertKey": "4ea9644577a24983c4bdf4844c867556FFFFNRAL"
+                }
+            }
+        ],
+        "Enrich": [ "WithNewRelicLogsInContext" ],
+        "rollingInterval": "Day",
+        "Properties": {
+            "Application": "sre-monitor-test-funv-dev",
+            "applicationName": "sre-monitor-test-funv-dev"
+        }
+    }
+}
+
