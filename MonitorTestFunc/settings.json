@@ -34,12 +34,21 @@
                 "Name": "NewRelicLogs",
                 "Args": {
                     "Application": "sre-monitor-test-funv-dev",
-                    "applicationName": "sre-monitor-test-funv-dev",
-                    "insertKey": "4ea9644577a24983c4bdf4844c867556FFFFNRAL"
+                    "applicationName": "sre-monitor-test-funv-dev"
+                }
+            },
+            {
+                "Name": "File",
+                "Args": {
+                    "path": "log-.txt",
+                    "rollingInterval": "Day",
+                    "rollOnFileSizeLimit": true,
+                    "fileSizeLimitBytes": 10485760, // 10 MB
+                    "outputTemplate": "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}"
                 }
             }
         ],
-        "Enrich": [ "WithNewRelicLogsInContext" ],
+        "Enrich": [ "WithNewRelicLogsInContext", "FromLogContext", "WithMachineName", "WithThreadId" ],
         "rollingInterval": "Day",
         "Properties": {
             "Application": "sre-monitor-test-funv-dev",
